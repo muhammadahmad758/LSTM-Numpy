@@ -95,7 +95,8 @@ class CifgLSTM:
             dc[t] = dy[t] * o[t] * dh(c[t]) + po * do[t]
             if t < T-1:
                 dc[t] += pi * di[t+1]  + dc[t+1] * f[t+1]
-            di[t] = dc[t] * z[t] * dsigma(i_[t])
+            c_prev = c[t - 1] if t > 0 else 0  # cell state before t (0 at t=0)
+            di[t] = dc[t] * (z[t] - c_prev) * dsigma(i_[t])  # CIFG: f = 1 - i, so dc/di = z - c_prev
             dz[t] = dc[t] * i[t] * dg(z_[t])
             
             # Input Deltas
